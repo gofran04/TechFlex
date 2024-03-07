@@ -7,6 +7,7 @@ use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\StoreProductRequest;
 
 class ProductController extends Controller
 {
@@ -19,9 +20,12 @@ class ProductController extends Controller
         return ProductResource::collection($products);
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-
+        $product = Product::create($request->validated());
+        return (new ProductResource($product))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
  
