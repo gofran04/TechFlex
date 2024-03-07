@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 
 class ProductController extends Controller
 {
@@ -35,9 +36,13 @@ class ProductController extends Controller
     }
 
 
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-    
+        $product->update($request->validated());
+
+        return (new ProductResource($product->refresh()))
+            ->response()
+            ->setStatusCode(Response::HTTP_ACCEPTED);
     }
 
 
