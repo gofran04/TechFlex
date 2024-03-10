@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
@@ -12,9 +11,11 @@ use App\Http\Requests\Product\UpdateProductRequest;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct() 
+    {
+        $this->middleware('auth:api', ['except' => ['index', 'show']]);
+    }
+
     public function index()
     {
         $products = Product::all();
