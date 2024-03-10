@@ -60,4 +60,22 @@ class ProductTest extends TestCase
         $this->assertDatabaseHas('products',$data->toArray());
     }
 
+    public function test_an_auth_user_can_update_a_product()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->actingAs(User::factory()->create());
+
+        $product = Product::factory()->create(['name' => 'product 1']);
+
+        $product->name = 'new name';
+        $product->price = 20;
+
+
+        $this->patch('/api/products/'.$product->id, $product->toArray());
+
+        $this->assertDatabaseHas('products',[
+            'name' => 'new name',
+        ]);
+    } 
 }
