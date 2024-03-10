@@ -77,5 +77,18 @@ class ProductTest extends TestCase
         $this->assertDatabaseHas('products',[
             'name' => 'new name',
         ]);
-    } 
+    }
+
+    public function test_an_auth_user_can_delete_a_product()
+    {
+        $this->actingAs(User::factory()->create());
+
+        $product = Product::factory()->create();
+
+        $response = $this->delete('/api/products/'.$product->id);
+
+        $this->assertEquals(0,Product::all()->count());
+        $this->assertSoftDeleted($product);
+    }
+    
 }
