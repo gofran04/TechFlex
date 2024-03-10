@@ -45,5 +45,19 @@ class ProductTest extends TestCase
            ]);
 
     }
-    
+
+    public function test_an_auth_user_can_create_a_product()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->actingAs(User::factory()->create());
+
+        $data = Product::factory()->make(['name' => 'product 1']);
+
+        $this->post('/api/products', $data->toArray());
+
+        $this->assertEquals(1,Product::all()->count());
+        $this->assertDatabaseHas('products',$data->toArray());
+    }
+
 }
