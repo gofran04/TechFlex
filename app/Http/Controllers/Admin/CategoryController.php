@@ -34,6 +34,7 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
+        return new CategoryResource($category);
     }
 
     public function update(Request $request, Category $category)
