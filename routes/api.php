@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Auth\AuthController;
 
 
@@ -24,3 +25,5 @@ Route::group(['middleware' => 'guest'], function (){
 });
 
 Route::apiResource('products',ProductController::class);
+Route::apiResource('categories',CategoryController::class);
+
