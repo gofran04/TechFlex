@@ -21,9 +21,13 @@ use App\Http\Controllers\Auth\AuthController;
 Route::group(['middleware' => 'guest'], function (){
     Route::post('register',[AuthController::class, 'register'])->name('register');
     Route::post('login',[AuthController::class, 'login'])->name('login');
+    Route::apiResource('products',ProductController::class)->only(['index','show']);
+    Route::apiResource('categories',CategoryController::class)->only(['index','show']);
 
 });
 
-Route::apiResource('products',ProductController::class);
-Route::apiResource('categories',CategoryController::class);
+Route::group(['middleware' => 'auth'],function(){
+    Route::apiResource('products',ProductController::class)->only(['create','update','delete']);
+    Route::apiResource('categories',CategoryController::class)->only(['create','update','delete']);
 
+});
