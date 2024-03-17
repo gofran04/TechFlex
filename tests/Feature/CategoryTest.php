@@ -24,5 +24,21 @@ class CategoryTest extends TestCase
         $this->assertDatabaseCount('categories', 8);
     }
 
+    public function test_all_users_can_read_a_category()
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->get('/api/categories/'.$category->id);
+
+        $response->assertSuccessful();
+        $response->assertJson([
+               'data' => [
+                   'id'          => $category->id,
+                   'name'        => $category->name,
+               ]
+           ]);
+
+    }
+
     }
 
