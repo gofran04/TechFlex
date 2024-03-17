@@ -53,5 +53,24 @@ class CategoryTest extends TestCase
         $this->assertDatabaseHas('categories',$data->toArray());
     }
 
+    public function test_an_auth_user_can_update_a_category()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->actingAs(User::factory()->create());
+
+        $category = Category::factory()->create(['name' => 'category 1']);
+
+        $category->name = 'new name';
+        $category->price = 20;
+
+
+        $this->patch('/api/categories/'.$category->id, $category->toArray());
+
+        $this->assertDatabaseHas('categories',[
+            'name' => 'new name',
+        ]);
+    }
+
     }
 
