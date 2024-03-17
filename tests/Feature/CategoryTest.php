@@ -37,7 +37,20 @@ class CategoryTest extends TestCase
                    'name'        => $category->name,
                ]
            ]);
+    }
 
+    public function test_an_auth_user_can_create_a_category()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->actingAs(User::factory()->create());
+
+        $data = Category::factory()->make(['name' => 'category 1']);
+
+        $this->post('/api/categories', $data->toArray());
+
+        $this->assertEquals(1,Category::all()->count());
+        $this->assertDatabaseHas('categories',$data->toArray());
     }
 
     }
