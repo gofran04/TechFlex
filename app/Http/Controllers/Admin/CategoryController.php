@@ -23,6 +23,7 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request)
     {
+        $this->authorize('create-category');
         $category = Category::create($request->validated());
         return (new CategoryResource($category))
             ->response()
@@ -36,6 +37,7 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category)
     {
+        $this->authorize('edit-category');
        $category->update($request->validated());
 
         return (new CategoryResource($category->refresh()))
@@ -46,6 +48,7 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        $this->authorize('delete-category');
         $category->delete();
         return response()->json([
             'message' => ('Category successfully deleted')
