@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Requests\User\StoreUserRequest;
 use Symfony\Component\HttpFoundation\Response;
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
@@ -19,6 +21,25 @@ class UserController extends Controller
     public function show(User $user)
     {
         return new UserResource($user);
+    }
+
+    public function store(StoreUserRequest $request, User $user)
+    {
+
+        $user = User::create($request->validated());
+        $validated_type = $request->safe()->only(['type']);
+        if($validated_type == 'driver')
+        {
+            $user->assignRole('driver');
+
+        }else
+        {
+            $user->assignRole('supervisor');
+        }
+        return (new UserResource($user))
+                    ->response()
+                    ->setStatusCode(Response::HTTP_CREATED);
+
     }
 
     public function update(UpdateUserRequest $request, User $user)
