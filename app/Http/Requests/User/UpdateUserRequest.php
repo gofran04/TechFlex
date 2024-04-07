@@ -3,6 +3,8 @@
 namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
 
 class UpdateUserRequest extends FormRequest
 {
@@ -26,6 +28,7 @@ class UpdateUserRequest extends FormRequest
             'address'       => ['required'],
             'phone'         => 'required|starts_with:0|string|min:10|max:10|unique:users,phone,'.$this->user->id,
             'email'         => 'required|email|unique:users,email,'.$this->user->id,
+            'type'          => ['required', Rule::in(['driver','supervisor'])],
         ];
     }
 }
