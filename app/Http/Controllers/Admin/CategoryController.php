@@ -25,6 +25,10 @@ class CategoryController extends Controller
     {
         $this->authorize('create-category');
         $category = Category::create($request->validated());
+        if ($request->has('category_pic')) 
+        {
+            $category->addMedia($request->file('category_pic'))->toMediaCollection('category_pic');
+        }
         return (new CategoryResource($category))
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
@@ -39,6 +43,14 @@ class CategoryController extends Controller
     {
         $this->authorize('edit-category');
        $category->update($request->validated());
+       if ($request->has('category_pic')) 
+        {
+            if ($request->input('category_pic') !== $category->category_pic->file_name) 
+            {
+                $category->clearMediaCollection('category_pic');
+            }
+            $category->addMedia($request->file('category_pic'))->toMediaCollection('category_pic');
+        }
 
         return (new CategoryResource($category->refresh()))
             ->response()
