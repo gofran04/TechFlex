@@ -23,6 +23,7 @@ class UpdateCategoryRequest extends FormRequest
     {
         return [
             'name'              => ['required', 'string'],
+            'category_pic'        => ['file'],
         ];
     }
 }
