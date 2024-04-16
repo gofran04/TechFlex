@@ -42,8 +42,8 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         $this->authorize('edit-category');
-       $category->update($request->validated());
-       if ($request->has('category_pic')) 
+        $category->update($request->validated());
+        if ($request->has('category_pic')) 
         {
             if ($request->input('category_pic') !== $category->category_pic->file_name) 
             {
@@ -62,6 +62,7 @@ class CategoryController extends Controller
     {
         $this->authorize('delete-category');
         $category->delete();
+        $category->clearMediaCollection('category_pic');
         return response()->json([
             'message' => ('Category successfully deleted')
         ]);
