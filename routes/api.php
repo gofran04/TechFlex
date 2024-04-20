@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 
 
@@ -29,5 +30,5 @@ Route::group(['middleware' => 'guest'], function (){
 Route::group(['middleware' => 'auth'],function(){
     Route::apiResource('products',ProductController::class)->only(['create','update','delete']);
     Route::apiResource('categories',CategoryController::class)->only(['create','update','delete']);
-
+    Route::apiResource('users',UserController::class);
 });
