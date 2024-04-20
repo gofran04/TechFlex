@@ -22,6 +22,11 @@ class ProductController extends Controller
     {
         $this->authorize('create-product');
         $product = Product::create($request->validated());
+        if ($request->has('product_pic')) 
+        {
+            $product->addMedia($request->file('product_pic'))->toMediaCollection('product_pic');
+        }
+
         return (new ProductResource($product))
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
@@ -38,6 +43,14 @@ class ProductController extends Controller
     {
         $this->authorize('edit-product');
         $product->update($request->validated());
+        if ($request->has('product_pic')) 
+        {
+            if ($request->input('product_pic') !== $product->product_pic->file_name) 
+            {
+                $product->clearMediaCollection('product_pic');
+            }
+            $product->addMedia($request->file('product_pic'))->toMediaCollection('product_pic');
+        }
 
         return (new ProductResource($product->refresh()))
             ->response()
@@ -49,8 +62,9 @@ class ProductController extends Controller
     {
         $this->authorize('delete-product');
         $product->delete();
+        $product->clearMediaCollection('product_pic');
         return response()->json([
-            'message' => __('Product successfully deleted')
+            'message' => ('Product successfully deleted')
         ]);
     }
 }
