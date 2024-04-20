@@ -20,6 +20,7 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
+        $this->authorize('create-product');
         $product = Product::create($request->validated());
         return (new ProductResource($product))
             ->response()
@@ -35,6 +36,7 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product)
     {
+        $this->authorize('edit-product');
         $product->update($request->validated());
 
         return (new ProductResource($product->refresh()))
@@ -45,6 +47,7 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        $this->authorize('delete-product');
         $product->delete();
         return response()->json([
             'message' => __('Product successfully deleted')
