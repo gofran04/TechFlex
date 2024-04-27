@@ -109,14 +109,15 @@ class ProductTest extends TestCase
         $this->assertSoftDeleted($product);
     }
 
-    public function test_guest_can_not_create_update_or_delete_manage_products()
+    public function test_guest_can_not_create_update_or_delete_products()
     {
-        Product::factory()->count(2)->create();
         $data = Product::factory()->make(['name' => 'product 1']);
-        $product = Product::find(1);
+        $product = $this->createProduct();
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $this->patch('/api/products/'.$product->id, $product->toArray())->assertRedirect(route('login'));
-        $this->post('/api/products', $data->toArray())->assertRedirect(route('login'));
+        $this->patch('/api/products/'.$product->id, array_merge($data->toArray(),['product_pic' => $file]))->assertRedirect(route('login'));
+        $this->post('/api/products', array_merge($data->toArray(),['product_pic' => $file]))->assertRedirect(route('login'));
         $this->delete('/api/products/'.$product->id)->assertRedirect(route('login'));
     }
 
