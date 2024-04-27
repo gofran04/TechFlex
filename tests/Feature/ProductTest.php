@@ -135,6 +135,22 @@ class ProductTest extends TestCase
         $this->delete('/api/products/'.$product->id)->assertForbidden();
     }
 
+    public function test_user_can_not_show_update_delete_not_found_product()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
+
+        $data = Product::factory()->make(['name' => 'product 1']);
+        $product = $this->createProduct();
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+
+        $this->get('/api/products/88')->assertNotFound();
+        $this->actingAs($user)->patch('/api/products/88', array_merge($data->toArray(),['product_pic' => $file]))->assertNotFound();
+        $this->actingAs($user)->delete('/api/products/88')->assertNotFound();
+    }
+
     protected function createProduct()
     {
         Storage::fake('avatars');
