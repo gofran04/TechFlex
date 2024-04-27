@@ -7,11 +7,25 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Product;
+use Database\Seeders\GeneralManagerSeeder;
+use Database\Seeders\PermissionsSeeder;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 
 class ProductTest extends TestCase
 {
     use RefreshDatabase;
+    
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // $this->artisan("db:seed");
+        $this->seed([
+            GeneralManagerSeeder::class,
+            PermissionsSeeder::class,
+        ]);
+    }
 
     public function test_all_users_can_read_all_products()
     {
@@ -19,7 +33,7 @@ class ProductTest extends TestCase
 
         $this->get('/api/products');
 
-        $this->assertDatabaseCount('products', 8);//3 this will pass
+        $this->assertDatabaseCount('products', 8);
 
     }
 
@@ -42,18 +56,24 @@ class ProductTest extends TestCase
 
     }
 
-    public function test_an_auth_user_can_create_a_product()
+    public function test_an_authenticated_and_authorized_user_can_create_a_product()
     {
-        $this->withoutExceptionHandling();
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
 
-        $this->actingAs(User::factory()->create());
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $data = Product::factory()->make(['name' => 'product 1']);
-
-        $this->post('/api/products', $data->toArray());
-
+        $product_attribute = Product::factory()->make(['name' => 'product one']);
+        $data = array_merge($product_attribute->toArray(),['product_pic' => $file]);
+        
+        $response = $this->actingAs($user)->post('/api/products', $data);
         $this->assertEquals(1,Product::all()->count());
-        $this->assertDatabaseHas('products',$data->toArray());
+        $response->assertCreated();
+        $response->assertJson([
+            'data' => [
+            'name' => $product_attribute->name,
+        ]]);
     }
 
     public function test_an_auth_user_can_update_a_product()
@@ -79,9 +99,9 @@ class ProductTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $product = Product::factory()->create();
+        $product = $this->createProduct();
 
-        $response = $this->delete('/api/products/'.$product->id);
+       $this->delete('/api/products/'.$product->id);
 
         $this->assertEquals(0,Product::all()->count());
         $this->assertSoftDeleted($product);
@@ -89,7 +109,6 @@ class ProductTest extends TestCase
 
     public function test_guest_can_not_create_update_or_delete_manage_products()
     {
-
         Product::factory()->count(2)->create();
         $data = Product::factory()->make(['name' => 'product 1']);
         $product = Product::find(1);
@@ -97,6 +116,16 @@ class ProductTest extends TestCase
         $this->patch('/api/products/'.$product->id, $product->toArray())->assertRedirect(route('login'));
         $this->post('/api/products', $data->toArray())->assertRedirect(route('login'));
         $this->delete('/api/products/'.$product->id)->assertRedirect(route('login'));
+    }
 
+    protected function createProduct()
+    {
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        $product = Product::factory()->create(['name' => 'product one']);
+        $product->addMedia($file)->toMediaCollection('product_pic');
+
+        return $product;
     }
 }
