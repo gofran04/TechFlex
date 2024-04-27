@@ -76,19 +76,20 @@ class ProductTest extends TestCase
         ]]);
     }
 
-    public function test_an_auth_user_can_update_a_product()
+    public function test_an_authenticated_and_authorized_user_can_update_a_product()
     {
-        $this->withoutExceptionHandling();
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
 
-        $this->actingAs(User::factory()->create());
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $product = Product::factory()->create(['name' => 'product 1']);
 
+        $product = $this->createProduct();
         $product->name = 'new name';
-        $product->price = 20;
 
-
-        $this->patch('/api/products/'.$product->id, $product->toArray());
+        $data = array_merge($product->toArray(),['product_pic' => $file]);
+        $this->actingAs($user)->patch('/api/products/'.$product->id, $data);
 
         $this->assertDatabaseHas('products',[
             'name' => 'new name',
