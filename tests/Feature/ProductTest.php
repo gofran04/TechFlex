@@ -120,6 +120,20 @@ class ProductTest extends TestCase
         $this->delete('/api/products/'.$product->id)->assertRedirect(route('login'));
     }
 
+    public function test_unauthorized_users_can_not_create_update_or_delete_products()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $data = Product::factory()->make(['name' => 'product 1']);
+        $product = $this->createProduct();
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        $this->patch('/api/products/'.$product->id, array_merge($product->toArray(),['product_pic' => $file]))->assertForbidden();
+        $this->post('/api/products',array_merge($data->toArray(),['product_pic' => $file]))->assertForbidden();
+        $this->delete('/api/products/'.$product->id)->assertForbidden();
+    }
+
     protected function createProduct()
     {
         Storage::fake('avatars');
