@@ -96,13 +96,14 @@ class ProductTest extends TestCase
         ]);
     }
 
-    public function test_an_auth_user_can_delete_a_product()
+    public function test_an_authenticated_and_authorized_user_can_delete_a_product()
     {
-        $this->actingAs(User::factory()->create());
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
 
         $product = $this->createProduct();
 
-       $this->delete('/api/products/'.$product->id);
+        $this->actingAs($user)->delete('/api/products/'.$product->id);
 
         $this->assertEquals(0,Product::all()->count());
         $this->assertSoftDeleted($product);
