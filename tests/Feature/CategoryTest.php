@@ -114,13 +114,28 @@ class CategoryTest extends TestCase
     {
         $data = Category::factory()->make(['name' => 'category 1']);
         $category = $this->createCategory();
-        
+
         Storage::fake('avatars');
         $file = UploadedFile::fake()->image('avatar.jpg');
 
         $this->patch('/api/categories/'.$category->id, array_merge($data->toArray(),['category_pic' => $file]))->assertRedirect(route('login'));
         $this->post('/api/categories', array_merge($data->toArray(),['category_pic' => $file]))->assertRedirect(route('login'));
         $this->delete('/api/categories/'.$category->id)->assertRedirect(route('login'));
+    }
+
+    public function test_unauthorized_users_can_not_create_update_or_delete_categories()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $data = Category::factory()->make(['name' => 'category 1']);
+        $category = $this->createCategory();
+
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        $this->patch('/api/categories/'.$category->id, array_merge($category->toArray(),['category_pic' => $file]))->assertForbidden();
+        $this->post('/api/categories',array_merge($data->toArray(),['category_pic' => $file]))->assertForbidden();
+        $this->delete('/api/categories/'.$category->id)->assertForbidden();
     }
 
     protected function createCategory()
