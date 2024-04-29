@@ -35,5 +35,19 @@ class UserTest extends TestCase
         $this->assertDatabaseCount('users', count($response['data']));
     }
 
+    public function test_an_authenticated_and_authorized_user_can_read_a_user()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
+        $this->actingAs($user);
+
+        $user = User::factory()->create();
+        $response = $this->get('/api/users/'.$user->id);
+
+        $response->assertSuccessful();
+        $this->assertDatabaseHas('users',$user->toArray());
+
+    }
+
 }
 
