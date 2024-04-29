@@ -138,6 +138,23 @@ class CategoryTest extends TestCase
         $this->delete('/api/categories/'.$category->id)->assertForbidden();
     }
 
+    public function test_user_can_not_show_update_delete_not_found_category()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
+
+        $data = Category::factory()->make(['name' => 'category 1']);
+        $category = $this->createCategory();
+
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+
+        $this->get('/api/categories/88')->assertNotFound();
+        $this->actingAs($user)->patch('/api/categories/88', array_merge($data->toArray(),['category_pic' => $file]))->assertNotFound();
+        $this->actingAs($user)->delete('/api/categories/88')->assertNotFound();
+    }
+
     protected function createCategory()
     {
         Storage::fake('avatars');
