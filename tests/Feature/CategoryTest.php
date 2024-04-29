@@ -112,12 +112,14 @@ class CategoryTest extends TestCase
 
     public function test_guest_can_not_create_update_or_delete_categories()
     {
-        Category::factory()->count(2)->create();
         $data = Category::factory()->make(['name' => 'category 1']);
-        $category = Category::find(1);
+        $category = $this->createCategory();
+        
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $this->patch('/api/categories/'.$category->id, $category->toArray())->assertRedirect(route('login'));
-        $this->post('/api/categories', $data->toArray())->assertRedirect(route('login'));
+        $this->patch('/api/categories/'.$category->id, array_merge($data->toArray(),['category_pic' => $file]))->assertRedirect(route('login'));
+        $this->post('/api/categories', array_merge($data->toArray(),['category_pic' => $file]))->assertRedirect(route('login'));
         $this->delete('/api/categories/'.$category->id)->assertRedirect(route('login'));
     }
 
