@@ -96,13 +96,15 @@ class CategoryTest extends TestCase
         ]);
     }
 
-    public function test_an_auth_user_can_delete_a_category()
+    public function test_an_authenticated_and_authorized__user_can_delete_a_category()
     {
         $this->actingAs(User::factory()->create());
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
 
-        $category = Category::factory()->create();
+        $category = $this->createCategory();
 
-        $this->delete('/api/categories/'.$category->id);
+        $this->actingAs($user)->delete('/api/categories/'.$category->id);
 
         $this->assertEquals(0,Category::all()->count());
         $this->assertSoftDeleted($category);
