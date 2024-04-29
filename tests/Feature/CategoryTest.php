@@ -9,10 +9,23 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Category;
 use Illuminate\Session\TokenMismatchException;
+use Database\Seeders\GeneralManagerSeeder;
+use Database\Seeders\PermissionsSeeder;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed([
+            GeneralManagerSeeder::class,
+            PermissionsSeeder::class,
+        ]);
+    }
 
 
     public function test_all_users_can_read_all_categories()
@@ -39,18 +52,27 @@ class CategoryTest extends TestCase
            ]);
     }
 
-    public function test_an_auth_user_can_create_a_category()
+    public function test_an_authenticated_and_authorized_user_can_create_a_category()
     {
-        $this->withoutExceptionHandling();
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
+        $this->actingAs($user);
 
-        $this->actingAs(User::factory()->create());
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
 
         $data = Category::factory()->make(['name' => 'category 1']);
+        $category_attribute = Category::factory()->make(['name' => 'category one']);
+        $data = array_merge($category_attribute->toArray(),['category_pic' => $file]);
 
-        $this->post('/api/categories', $data->toArray());
+        $response =  $this->post('/api/categories', $data);
 
         $this->assertEquals(1,Category::all()->count());
-        $this->assertDatabaseHas('categories',$data->toArray());
+        $response->assertCreated();
+        $response->assertJson([
+            'data' => [
+            'name' => $category_attribute->name,
+        ]]);
     }
 
     public function test_an_auth_user_can_update_a_category()
