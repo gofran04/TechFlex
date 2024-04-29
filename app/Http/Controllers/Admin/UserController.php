@@ -27,7 +27,7 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request, User $user)
     {
-
+        $this->authorize('create-user');
         $user = User::create($request->validated());
         $validated_type = $request->safe()->only(['type']);
         if($validated_type == 'driver')
