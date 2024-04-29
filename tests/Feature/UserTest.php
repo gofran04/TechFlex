@@ -49,5 +49,30 @@ class UserTest extends TestCase
 
     }
 
+    public function test_an_authenticated_and_authorized_user_can_create_a_user()
+    {
+
+        $user = User::factory()->create();
+        $user->assignRole('General-Manager');
+        $this->actingAs($user);
+
+        $user_attribute = [
+            'name'                  => 'Test User',
+            'email'                 => 'test@example.com',
+            'password'              => 'password',
+            'password_confirmation' => 'password',
+            'phone'                 => '0123456789',
+            'address'               => 'user address',
+            'type'                  => 'driver',
+
+        ];
+        $response = $this->post('/api/users', $user_attribute);
+        $response->assertCreated();
+        $response->assertJson([
+            'data' => [
+            'email' => $user_attribute['email'],
+        ]]);
+    }
+
 }
 
