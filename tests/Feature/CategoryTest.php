@@ -75,19 +75,21 @@ class CategoryTest extends TestCase
         ]]);
     }
 
-    public function test_an_auth_user_can_update_a_category()
+    public function test_an_authenticated_and_authorized_user_can_update_a_category()
     {
-        $this->withoutExceptionHandling();
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
+        $this->actingAs($user);
 
-        $this->actingAs(User::factory()->create());
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $category = Category::factory()->create(['name' => 'category 1']);
+        $category = $this->createCategory();
 
         $category->name = 'new name';
-        $category->price = 20;
 
-
-        $this->patch('/api/categories/'.$category->id, $category->toArray());
+       $data = array_merge($category->toArray(),['category_pic' => $file]);
+       $this->patch('/api/categories/'.$category->id, $data);        
 
         $this->assertDatabaseHas('categories',[
             'name' => 'new name',
@@ -117,5 +119,16 @@ class CategoryTest extends TestCase
         $this->delete('/api/categories/'.$category->id)->assertRedirect(route('login'));
     }
 
+    protected function createCategory()
+    {
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        $category = Category::factory()->create(['name' => 'category one']);
+        $category->addMedia($file)->toMediaCollection('category_pic');
+
+        return $category;
     }
+
+}
 
