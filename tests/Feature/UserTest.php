@@ -145,5 +145,19 @@ class UserTest extends TestCase
         $this->delete('/api/users/'.$user2->id)->assertForbidden();
     }
 
+    public function test_user_can_not_show_update_delete_not_found_user()
+    {
+        $user1= User::factory()->create();
+        $user1->assignRole('supervisor');
+        $this->actingAs($user1);
+
+        $user2 = User::factory()->create();
+        $user2->name = 'new name';
+
+        $this->get('/api/users/888')->assertNotFound();
+        $this->patch('/api/users/888', $user2->toArray())->assertNotFound();
+        $this->delete('/api/users/888')->assertNotFound();
+    }
+
 }
 
