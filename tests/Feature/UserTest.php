@@ -122,5 +122,28 @@ class UserTest extends TestCase
         $this->delete('/api/users/'.$user->id)->assertRedirect(route('login'));
     }
 
+    public function test_unauthorized_users_can_not_create_update_or_delete_users()
+    {
+        $user1 = User::factory()->create();
+        $this->actingAs($user1);
+
+        $user2 = User::factory()->create();
+        $user2->name = 'new name';
+
+        $user_attribute = [
+            'name'                  => 'Test User',
+            'email'                 => 'test@example.com',
+            'password'              => 'password',
+            'password_confirmation' => 'password',
+            'phone'                 => '0123456789',
+            'address'               => 'user address',
+            'type'                  => 'driver',
+        ];
+        
+        $this->patch('/api/users/'.$user2->id, $user2->toArray())->assertForbidden();
+        $this->post('/api/users',$user_attribute)->assertForbidden();
+        $this->delete('/api/users/'.$user2->id)->assertForbidden();
+    }
+
 }
 
