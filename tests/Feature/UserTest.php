@@ -74,5 +74,21 @@ class UserTest extends TestCase
         ]]);
     }
 
+    public function test_an_authenticated_and_authorized_user_can_update_a_user()
+    {
+        $user1 = User::factory()->create();
+        $user1->assignRole('supervisor');
+
+
+        $user2 = User::factory()->create();
+        $user2->name = 'new name';
+
+        $this->actingAs($user1)->patch('/api/users/'.$user2->id, $user2->toArray());
+
+        $this->assertDatabaseHas('users',[
+            'name' => 'new name',
+        ]);
+    }
+
 }
 
