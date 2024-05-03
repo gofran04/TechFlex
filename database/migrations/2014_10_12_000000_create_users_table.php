@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->set('type', ['client', 'driver', 'admin', 'supervisor'])->default('driver');
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

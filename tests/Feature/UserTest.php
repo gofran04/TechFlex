@@ -90,5 +90,17 @@ class UserTest extends TestCase
         ]);
     }
 
+    public function test_an_authenticated_and_authorized_user_can_delete_a_user()
+    {
+        $user1 = User::factory()->create();
+        $user1->assignRole('supervisor');
+
+        $user2 = User::factory()->create(['name' => 'AABA']);
+
+        $this->actingAs($user1)->delete('/api/users/'.$user2->id);
+
+        $this->assertSoftDeleted($user2);
+    }
+
 }
 
