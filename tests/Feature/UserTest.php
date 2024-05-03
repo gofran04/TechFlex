@@ -102,5 +102,25 @@ class UserTest extends TestCase
         $this->assertSoftDeleted($user2);
     }
 
+    public function test_guest_can_not_create_update_or_delete_users()
+    {
+        $user_attribute = [
+            'name'                  => 'Test User',
+            'email'                 => 'test@example.com',
+            'password'              => 'password',
+            'password_confirmation' => 'password',
+            'phone'                 => '0123456789',
+            'address'               => 'user address',
+            'type'                  => 'driver',
+
+        ];
+        $user = User::factory()->create();
+        $user->name = 'new name';
+
+        $this->patch('/api/users/'.$user->id, $user->toArray())->assertRedirect(route('login'));
+        $this->post('/api/users', $user_attribute)->assertRedirect(route('login'));
+        $this->delete('/api/users/'.$user->id)->assertRedirect(route('login'));
+    }
+
 }
 
