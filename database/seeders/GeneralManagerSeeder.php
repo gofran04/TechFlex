@@ -26,7 +26,7 @@ class GeneralManagerSeeder extends Seeder
             'address'           => "GeneralManager_Address",
             'email'             => "GeneralManager@mail.com",
             'password'          => bcrypt('admin123'),
-            'type'              => 'admin',
+            'type'              => 'General-Manager',
 
         ];
 

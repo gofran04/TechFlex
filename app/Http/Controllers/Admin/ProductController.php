@@ -22,6 +22,7 @@ class ProductController extends Controller
     {
         $this->authorize('create-product');
         $product = Product::create($request->validated());
+
         if ($request->has('product_pic')) 
         {
             $product->addMedia($request->file('product_pic'))->toMediaCollection('product_pic');
@@ -32,12 +33,10 @@ class ProductController extends Controller
             ->setStatusCode(Response::HTTP_CREATED);
     }
 
- 
     public function show(Product $product)
     {
         return new ProductResource($product);
     }
-
 
     public function update(UpdateProductRequest $request, Product $product)
     {

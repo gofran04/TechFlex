@@ -7,11 +7,25 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Product;
+use Database\Seeders\GeneralManagerSeeder;
+use Database\Seeders\PermissionsSeeder;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 
 class ProductTest extends TestCase
 {
     use RefreshDatabase;
+    
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // $this->artisan("db:seed");
+        $this->seed([
+            GeneralManagerSeeder::class,
+            PermissionsSeeder::class,
+        ]);
+    }
 
     public function test_all_users_can_read_all_products()
     {
@@ -19,7 +33,7 @@ class ProductTest extends TestCase
 
         $this->get('/api/products');
 
-        $this->assertDatabaseCount('products', 8);//3 this will pass
+        $this->assertDatabaseCount('products', 8);
 
     }
 
@@ -42,61 +56,109 @@ class ProductTest extends TestCase
 
     }
 
-    public function test_an_auth_user_can_create_a_product()
+    public function test_an_authenticated_and_authorized_user_can_create_a_product()
     {
-        $this->withoutExceptionHandling();
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
 
-        $this->actingAs(User::factory()->create());
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $data = Product::factory()->make(['name' => 'product 1']);
-
-        $this->post('/api/products', $data->toArray());
-
+        $product_attribute = Product::factory()->make(['name' => 'product one']);
+        $data = array_merge($product_attribute->toArray(),['product_pic' => $file]);
+        
+        $response = $this->actingAs($user)->post('/api/products', $data);
         $this->assertEquals(1,Product::all()->count());
-        $this->assertDatabaseHas('products',$data->toArray());
+        $response->assertCreated();
+        $response->assertJson([
+            'data' => [
+            'name' => $product_attribute->name,
+        ]]);
     }
 
-    public function test_an_auth_user_can_update_a_product()
+    public function test_an_authenticated_and_authorized_user_can_update_a_product()
     {
-        $this->withoutExceptionHandling();
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
 
-        $this->actingAs(User::factory()->create());
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $product = Product::factory()->create(['name' => 'product 1']);
 
+        $product = $this->createProduct();
         $product->name = 'new name';
-        $product->price = 20;
 
-
-        $this->patch('/api/products/'.$product->id, $product->toArray());
+        $data = array_merge($product->toArray(),['product_pic' => $file]);
+        $this->actingAs($user)->patch('/api/products/'.$product->id, $data);
 
         $this->assertDatabaseHas('products',[
             'name' => 'new name',
         ]);
     }
 
-    public function test_an_auth_user_can_delete_a_product()
+    public function test_an_authenticated_and_authorized_user_can_delete_a_product()
     {
-        $this->actingAs(User::factory()->create());
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
 
-        $product = Product::factory()->create();
+        $product = $this->createProduct();
 
-        $response = $this->delete('/api/products/'.$product->id);
+        $this->actingAs($user)->delete('/api/products/'.$product->id);
 
         $this->assertEquals(0,Product::all()->count());
         $this->assertSoftDeleted($product);
     }
 
-    public function test_guest_can_not_create_update_or_delete_manage_products()
+    public function test_guest_can_not_create_update_or_delete_products()
     {
-
-        Product::factory()->count(2)->create();
         $data = Product::factory()->make(['name' => 'product 1']);
-        $product = Product::find(1);
+        $product = $this->createProduct();
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
 
-        $this->patch('/api/products/'.$product->id, $product->toArray())->assertRedirect(route('login'));
-        $this->post('/api/products', $data->toArray())->assertRedirect(route('login'));
+        $this->patch('/api/products/'.$product->id, array_merge($data->toArray(),['product_pic' => $file]))->assertRedirect(route('login'));
+        $this->post('/api/products', array_merge($data->toArray(),['product_pic' => $file]))->assertRedirect(route('login'));
         $this->delete('/api/products/'.$product->id)->assertRedirect(route('login'));
+    }
 
+    public function test_unauthorized_users_can_not_create_update_or_delete_products()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $data = Product::factory()->make(['name' => 'product 1']);
+        $product = $this->createProduct();
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        $this->patch('/api/products/'.$product->id, array_merge($product->toArray(),['product_pic' => $file]))->assertForbidden();
+        $this->post('/api/products',array_merge($data->toArray(),['product_pic' => $file]))->assertForbidden();
+        $this->delete('/api/products/'.$product->id)->assertForbidden();
+    }
+
+    public function test_user_can_not_show_update_delete_not_found_product()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
+
+        $data = Product::factory()->make(['name' => 'product 1']);
+        $product = $this->createProduct();
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+
+        $this->get('/api/products/88')->assertNotFound();
+        $this->actingAs($user)->patch('/api/products/88', array_merge($data->toArray(),['product_pic' => $file]))->assertNotFound();
+        $this->actingAs($user)->delete('/api/products/88')->assertNotFound();
+    }
+
+    protected function createProduct()
+    {
+        Storage::fake('avatars');
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        $product = Product::factory()->create(['name' => 'product one']);
+        $product->addMedia($file)->toMediaCollection('product_pic');
+
+        return $product;
     }
 }
