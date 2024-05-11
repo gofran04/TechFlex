@@ -14,18 +14,20 @@ class UserController extends Controller
 
     public function index()
     {
+        $this->authorize('view-all-users');
         $users = User::all();
         return UserResource::collection($users);
     }
 
     public function show(User $user)
     {
+        $this->authorize('view-user');
         return new UserResource($user);
     }
 
     public function store(StoreUserRequest $request, User $user)
     {
-
+        $this->authorize('create-user');
         $user = User::create($request->validated());
         $validated_type = $request->safe()->only(['type']);
         if($validated_type == 'driver')
@@ -44,6 +46,7 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user)
     {
+        $this->authorize('edit-user');
         $user->update($request->validated());
   
         return (new UserResource($user->refresh()))
@@ -53,6 +56,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        $this->authorize('delete-user');
         $user->delete();
         return response()->json([
             'message' => ('User successfully deleted')
