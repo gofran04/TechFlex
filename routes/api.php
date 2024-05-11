@@ -28,7 +28,7 @@ Route::group(['middleware' => 'guest'], function (){
 });
 
 Route::group(['middleware' => 'auth'],function(){
-    Route::apiResource('products',ProductController::class)->only(['create','update','delete']);
-    Route::apiResource('categories',CategoryController::class)->only(['create','update','delete']);
+    Route::apiResource('products',ProductController::class)->only(['store','update','destroy']);//->name('products');
+    Route::apiResource('categories',CategoryController::class)->only(['store','update','destroy']);
     Route::apiResource('users',UserController::class);
 });

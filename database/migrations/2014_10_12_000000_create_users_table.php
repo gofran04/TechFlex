@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('address');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->set('type', ['client', 'driver', 'admin', 'supervisor'])->default('client');
+            $table->set('type', ['client', 'driver', 'General-Manager', 'supervisor'])->default('supervisor');
             $table->rememberToken();
             $table->timestamps();
         });
