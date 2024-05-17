@@ -61,6 +61,7 @@ class PermissionsSeeder extends Seeder
 
             'create-order',
             'edit-order',
+            'view-all-orders',
             'view-order',
        ]);
 

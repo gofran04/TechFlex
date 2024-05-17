@@ -19,6 +19,20 @@ class OrderController extends Controller
     {
         $this->authorize('view-all-orders');
         $orders = Order::all();
+        $current_user_type = Auth()->user()->type;
+        if($current_user_type == 'client' ||  $current_user_type == 'driver')
+        {
+            $orders = Order::Where('client_id',auth()->id())->get();
+            if(sizeof($orders) > 0)
+            {
+                return OrderResource::collection($orders);
+
+            }else{ 
+                return response()->json([
+                    'message'      => 'You Have Not Orders To View!',
+                ]); 
+            }       
+        }
         return OrderResource::collection($orders);
     }
 
@@ -56,6 +70,20 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $this->authorize('view-order');
+
+        $current_user_type = Auth()->user()->type;
+        if($current_user_type == 'client' ||  $current_user_type == 'driver')
+        {
+            if($order->client_id == auth()->id())
+            {
+                return new OrderResource($order);
+            }else{
+                return response()->json([
+                    'message'      => 'You Have Not Orders To View!',
+                ]); 
+            }       
+        }
+
         return new OrderResource($order);
     }
 
