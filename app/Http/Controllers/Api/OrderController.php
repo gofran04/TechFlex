@@ -17,7 +17,9 @@ class OrderController extends Controller
 {
     public function index()
     {
-        //
+        $this->authorize('view-all-orders');
+        $orders = Order::all();
+        return OrderResource::collection($orders);
     }
 
     public function store(StoreOrderRequest $request)
