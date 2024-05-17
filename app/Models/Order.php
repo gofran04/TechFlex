@@ -14,6 +14,8 @@ class Order extends Model
         'products_price'
     ];
 
+    protected $with = ['orderProducts'];
+
     public function client()
     {
       return $this->belongsTo(User::class,'client_id');

@@ -80,6 +80,8 @@ class PermissionsSeeder extends Seeder
 
             'view-all-orders',
             'view-order',
+            'edit-order',
+
          ]);
          
        $driver =  Role::create(['guard_name' => 'api','name' => 'driver']);
