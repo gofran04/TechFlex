@@ -42,7 +42,7 @@ class OrderController extends Controller
         $this->authorize('create-order');
         return DB::transaction(function () use ($request) 
         {
-            $order = Order::Create(['client_id'=> auth()->id()]);
+            $order = Order::Create(['client_id' => auth()->id(),'address' => $request->address]);
 
             $all_products = $request->products;
             foreach ($all_products as $product)
