@@ -42,7 +42,11 @@ class PermissionsSeeder extends Seeder
             'create-category',
             'edit-category',
             'delete-category',
-        
+
+            'view-all-orders',
+            'view-order',
+            'create-order',
+            'edit-order',        
         ];
 
         foreach ($permissions as $permission) 
@@ -54,6 +58,11 @@ class PermissionsSeeder extends Seeder
        $client->syncPermissions([
             'edit-profile',
             'view-profile',
+
+            'create-order',
+            'edit-order',
+            'view-all-orders',
+            'view-order',
        ]);
 
        $supervisor =  Role::create(['guard_name' => 'api','name' => 'supervisor']);
@@ -61,12 +70,19 @@ class PermissionsSeeder extends Seeder
             'edit-user',
             'view-user',
             'view-all-users',
+            
             'create-product',
             'edit-product',
             'delete-product',
+
             'create-category',
             'edit-category',
             'delete-category',
+
+            'view-all-orders',
+            'view-order',
+            'edit-order',
+
          ]);
          
        $driver =  Role::create(['guard_name' => 'api','name' => 'driver']);

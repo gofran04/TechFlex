@@ -27,12 +27,21 @@ class AuthController extends Controller
    public function register(RegistrationRequest $request) 
    {
     $input = $request->validated();
-    $input['password'] = bcrypt($input['password']);        
-    $user = User::create($input);
+    $data = [
+        'email'    => $input['email'],
+        'password' => $input['password'],
+    ];
+    $input['password'] = bcrypt($input['password']); 
+    $input['type'] = 'client';   
 
+    $user = User::create($input);
+    $user->assignRole('client');
+
+    $token = auth()->attempt($data);
     return response()->json([
-        'message' => 'User successfully registered',
-        'user' => $user
+        'message'      => 'User successfully registered',
+        'user'         => $user,
+        'access_token' => $token,
     ], 201);
    }
 
