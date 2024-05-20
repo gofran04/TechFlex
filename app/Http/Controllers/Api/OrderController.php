@@ -8,10 +8,11 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\StoreOrderRequest;
+use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
-
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -87,11 +88,29 @@ class OrderController extends Controller
         return new OrderResource($order);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Order $order)
+    public function update(UpdateOrderRequest $request, Order $order)
     {
-        //
+        $this->authorize('edit-order');
+        $order->update($request->validate());
+
+        switch ($request->status) {
+            case 'in process':
+                $order->update(['status' => 'in process', 'driver_id' => $request->driver_id]);
+                break;            
+            case 'out for delivery':
+                $order->update(['status' => 'out for delivery', 'taken_at' => Carbon::now()]);
+                break;
+            case 'delivered':
+                $order->update(['status' => 'delivered','delivered_at' => Carbon::now()]);
+            break;
+            case 'canceled':
+                $order->update(['status' => 'canceled']);
+            break;
+        }
+
+        return (new OrderResource($order))
+                    ->response()
+                    ->setStatusCode(Response::HTTP_CREATED);
+        
     }
 }
