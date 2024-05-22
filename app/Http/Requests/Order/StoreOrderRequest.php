@@ -25,6 +25,7 @@ class StoreOrderRequest extends FormRequest
             'products'              => ['required'],
             'products.*.product_id' => ['required', 'exists:products,id'],
             'products.*.quantity'   => ['required', 'numeric', 'gte:1'],
+            'address'               => ['required', 'string',  'max:121'],
         ];
     }
 }
