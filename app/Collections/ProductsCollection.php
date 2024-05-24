@@ -28,8 +28,8 @@ class ProductsCollection
 
         $allowedFilters = [
             AllowedFilter::exact('id'),
+            AllowedFilter::exact('category_id'),
             'name',
-            'category_id',
             'price',
             'description',
             'created_at',
