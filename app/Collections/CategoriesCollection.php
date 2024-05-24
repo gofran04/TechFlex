@@ -30,11 +30,13 @@ class CategoriesCollection
             'updated_at',
         ];
 
+        $perPage = $request->limit  ? $request->limit : 50;
+
         return QueryBuilder::for(Category::class)
             ->select($defaultSelect)
             ->allowedFilters($allowedFilters)
             ->defaultSort($defaultSort)
-            ->get();
+            ->paginate($perPage);
     }
 
 }
