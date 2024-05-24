@@ -21,20 +21,6 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $this->authorize('view-all-orders');
-        $orders = Order::all();
-        $current_user_type = Auth()->user()->type;
-        if($current_user_type == 'client' ||  $current_user_type == 'driver')
-        {
-            $orders = Order::Where('client_id',auth()->id())->get();
-            if(sizeof($orders) > 0)
-            {
-                return OrderResource::collection(OrdersCollection::collection($request))->collection;
-            }else{ 
-                return response()->json([
-                    'message'      => 'You Have Not Orders To View!',
-                ]); 
-            }       
-        }
         return OrderResource::collection(OrdersCollection::collection($request))->collection;
 
     }

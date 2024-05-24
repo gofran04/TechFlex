@@ -5,6 +5,7 @@ namespace App\Collections;
 
 
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -12,7 +13,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 class OrdersCollection
 {
-    public static function collection(Request $request)
+    public static function collection(Request $request )
     {
         $defaultSort = '-created_at';
 
@@ -49,12 +50,25 @@ class OrdersCollection
 
         $perPage = $request->limit  ? $request->limit : 50;
 
-        return QueryBuilder::for(Order::class)
-            ->select($defaultSelect)
-            ->allowedFilters($allowedFilters)
-            ->allowedSorts($allowedSorts)
-            ->defaultSort($defaultSort)
-            ->paginate($perPage);
+        $current_user_type = Auth()->user()->type;
+        $query = '';
+        if($current_user_type == 'client')
+        {
+            $query = QueryBuilder::for(Order::where('client_id', auth()->id()));
+        }elseif($current_user_type == 'driver')
+        {
+            $query = QueryBuilder::for(Order::where('driver_id', auth()->id()));
+        }else
+        {
+            $query = QueryBuilder::for(Order::class);
+        }
+
+        return $query
+                ->select($defaultSelect)
+                ->allowedFilters($allowedFilters)
+                ->allowedSorts($allowedSorts)
+                ->defaultSort($defaultSort)
+                ->paginate($perPage);
     }
 
 }
