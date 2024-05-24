@@ -28,7 +28,7 @@ class Handler extends ExceptionHandler
         //     //
         // });
         $this->renderable(function (NotFoundHttpException $e, $request) {
-            if($request->is('api/categories/*') || $request->is('api/products/*') || $request->is('api/users/*') )
+            if($request->is('api/categories/*') || $request->is('api/products/*') || $request->is('api/users/*') || $request->is('api/orders/*') )
             {
                   return response()->json([
                   'message' => 'Record not found.'
