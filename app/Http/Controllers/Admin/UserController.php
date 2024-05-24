@@ -3,20 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\Controller;
+use App\Collections\UsersCollection;
 
 class UserController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('view-all-users');
-        $users = User::all();
-        return UserResource::collection($users);
+        return UserResource::collection(UsersCollection::collection($request))->collection;
     }
 
     public function show(User $user)
