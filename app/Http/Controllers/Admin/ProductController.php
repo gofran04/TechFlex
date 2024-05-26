@@ -6,16 +6,17 @@ use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
+use App\Collections\ProductsCollection;
 
 class ProductController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
-        return ProductResource::collection($products);
+        return ProductResource::collection(ProductsCollection::collection($request))->collection;
     }
 
     public function store(StoreProductRequest $request)
