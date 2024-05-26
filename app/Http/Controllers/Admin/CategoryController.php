@@ -9,16 +9,15 @@ use App\Http\Resources\CategoryResource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\Controller;
-
+use App\Collections\CategoriesCollection;
 
 
 class CategoryController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
-        return CategoryResource::collection($categories);
+        return CategoryResource::collection(CategoriesCollection::collection($request))->collection;
     }
 
     public function store(StoreCategoryRequest $request)
