@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('driver_id')->nullable()->references('id')->on('users');
             $table->float('products_price')->default(0);
             $table->string('address');
+            $table->double('delivery_latitude')->nullable();
+            $table->double('delivery_longitude')->nullable();
             $table->set('status', ['initiated','in process', 'out to delivery', 'deliverd', 'canceled'])->default('initiated');
             $table->timestamp('taken_at')->nullable();
             $table->timestamp('delivered_at')->nullable();
