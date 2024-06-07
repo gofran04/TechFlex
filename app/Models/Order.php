@@ -13,6 +13,7 @@ class Order extends Model
         'client_id',
         'products_price',
         'address',
+        'status',
         'driver_id',
         'taken_at',
         'delivered_at',
