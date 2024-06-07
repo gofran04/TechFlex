@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->references('id')->on('users');
-            $table->foreignId('driver_id')->references('id')->on('users');
+            $table->foreignId('driver_id')->nullable()->references('id')->on('users');
             $table->float('products_price')->default(0);
             $table->string('address');
             $table->set('status', ['initiated','in process', 'out to delivery', 'deliverd', 'canceled'])->default('initiated');
