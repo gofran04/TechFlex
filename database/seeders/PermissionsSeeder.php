@@ -86,6 +86,14 @@ class PermissionsSeeder extends Seeder
          ]);
          
        $driver =  Role::create(['guard_name' => 'api','name' => 'driver']);
+       $driver->syncPermissions([
+        'edit-profile',
+        'view-profile',
+
+        'edit-order',
+        'view-all-orders',
+        'view-order',
+   ]);
 
 
     }
