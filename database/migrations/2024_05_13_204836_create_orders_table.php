@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('address');
             $table->double('delivery_latitude')->nullable();
             $table->double('delivery_longitude')->nullable();
-            $table->set('status', ['initiated','in process', 'out to delivery', 'deliverd', 'canceled'])->default('initiated');
+            $table->set('status', ['initiated','in process', 'out to delivery', 'delivered', 'canceled'])->default('initiated');
             $table->timestamp('taken_at')->nullable();
             $table->timestamp('delivered_at')->nullable();
             $table->timestamps();

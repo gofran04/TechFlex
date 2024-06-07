@@ -78,9 +78,7 @@ class OrderController extends Controller
 
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        $this->authorize('edit-order');
-        $order->update($request->validate());
-
+       $this->authorize('edit-order');
         switch ($request->status) {
             case 'in process':
                 $order->update(['status' => 'in process', 'driver_id' => $request->driver_id]);
@@ -89,6 +87,19 @@ class OrderController extends Controller
                 $order->update(['status' => 'out for delivery', 'taken_at' => Carbon::now()]);
                 break;
             case 'delivered':
+              
+                $all_products = $order->orderProducts;
+                foreach($all_products as $product)
+                {
+                    $product_model = Product::find($product['product_id']);
+                    $product_model->update(['amount'   => $product_model-> amount - $product['quantity']]);
+                   
+                    if($product_model->amount == 0)
+                    {
+                        $product_model->update(['status'   => 'out stock']);
+                    }
+                }
+
                 $order->update(['status' => 'delivered','delivered_at' => Carbon::now()]);
             break;
             case 'canceled':
@@ -96,7 +107,7 @@ class OrderController extends Controller
             break;
         }
 
-        return (new OrderResource($order))
+        return (new OrderResource($order->refresh()))
                     ->response()
                     ->setStatusCode(Response::HTTP_CREATED);
         
