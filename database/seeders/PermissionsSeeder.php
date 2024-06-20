@@ -43,6 +43,12 @@ class PermissionsSeeder extends Seeder
             'edit-category',
             'delete-category',
 
+            'view-all-delivery-costs',
+            'view-delivery-cost',
+            'creat-delivery-cost',
+            'edit-delivery-cost',
+            'delete-delivery-cost',
+
             'view-all-orders',
             'view-order',
             'create-order',
@@ -82,6 +88,13 @@ class PermissionsSeeder extends Seeder
             'view-all-orders',
             'view-order',
             'edit-order',
+
+            'view-all-delivery-costs',
+            'view-delivery-cost',
+            'creat-delivery-cost',
+            'edit-delivery-cost',
+            'delete-delivery-cost',
+
 
          ]);
          
