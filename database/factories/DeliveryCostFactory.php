@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DeliveyCost>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\DeliveryCost>
  */
-class DeliveyCostFactory extends Factory
+class DeliveryCostFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,7 +18,7 @@ class DeliveyCostFactory extends Factory
     {
         return [
             'area'           => fake()->address(),
-            'delivey_cost'   => 1200,
+            'delivery_cost'  => 1200.00,
         ];
     }
 }

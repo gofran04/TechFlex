@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\DeliveyCostController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\OrderController;
 
@@ -33,4 +34,6 @@ Route::group(['middleware' => 'auth'],function(){
     Route::apiResource('categories',CategoryController::class)->only(['store','update','destroy']);
     Route::apiResource('orders',OrderController::class)->except(['destroy']);
     Route::apiResource('users',UserController::class);
+    Route::apiResource('delivery-cost',DeliveyCostController::class);
+
 });

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('delivey_costs', function (Blueprint $table) {
+        Schema::create('delivery_costs', function (Blueprint $table) {
             $table->id();
             $table->string('area');
             $table->float('delivery_cost');
