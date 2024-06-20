@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Product;
+use App\Models\DeliveryCost;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\StoreOrderRequest;
@@ -30,7 +31,13 @@ class OrderController extends Controller
         $this->authorize('create-order');
         return DB::transaction(function () use ($request) 
         {
-            $order = Order::Create(['client_id' => auth()->id(),'address' => $request->address]);
+            $order = Order::Create([
+                'client_id' => auth()->id(),
+                'address' => $request->address,
+                'area_id' => $request->area_id,
+            ]);
+
+            $delivery_cost = DeliveryCost::where('id',$request->area_id)->first()->delivery_cost;
 
             $all_products = $request->products;
             foreach ($all_products as $product)
@@ -48,7 +55,10 @@ class OrderController extends Controller
                 OrderProduct::create($data);
             }
             $products_price = OrderProduct::Where('order_id',$order->id)->sum('total_price');
-            $order->update([ 'products_price' => $products_price]);
+            $order->update([
+                'products_price' => $products_price,
+                'total_cost'     => $products_price + $delivery_cost,
+                ]);
             
             return (new OrderResource($order))
             ->response()
