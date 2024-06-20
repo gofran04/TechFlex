@@ -10,7 +10,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 
 
-class DeliveyCostCollection
+class DeliveryCostCollection
 {
     public static function collection(Request $request)
     {
