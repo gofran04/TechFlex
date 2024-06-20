@@ -26,8 +26,6 @@ Route::group(['middleware' => 'guest'], function (){
     Route::post('login',[AuthController::class, 'login'])->name('login');
     Route::apiResource('products',ProductController::class)->only(['index','show']);
     Route::apiResource('categories',CategoryController::class)->only(['index','show']);
-    Route::apiResource('delivery-costs',DeliveryCostController::class);
-
 });
 
 Route::group(['middleware' => 'auth'],function(){
@@ -35,5 +33,6 @@ Route::group(['middleware' => 'auth'],function(){
     Route::apiResource('categories',CategoryController::class)->only(['store','update','destroy']);
     Route::apiResource('orders',OrderController::class)->except(['destroy']);
     Route::apiResource('users',UserController::class);
+    Route::apiResource('delivery-costs',DeliveryCostController::class);
 
 });
