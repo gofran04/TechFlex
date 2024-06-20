@@ -4,15 +4,15 @@ namespace App\Http\Controllers\Admin;
 use App\Models\DeliveryCost;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Collections\DeliveyCostCollection;
-use App\Http\Resources\DeliveyCostResource;
+use App\Collections\DeliveryCostCollection;
+use App\Http\Resources\DeliveryCostResource;
 
 
-class DeliveyCostController extends Controller
+class DeliveryCostController extends Controller
 {
     public function index(Request $request)
     {
-        return DeliveyCostResource::collection(DeliveyCostCollection::collection($request))->collection; 
+        return DeliveryCostResource::collection(DeliveryCostCollection::collection($request))->collection; 
     }
 
     public function store(Request $request)
