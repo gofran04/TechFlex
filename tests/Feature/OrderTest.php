@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\DeliveryCost;
+use App\Models\Product;
 use Database\Seeders\GeneralManagerSeeder;
 use Database\Seeders\PermissionsSeeder;
 use Database\Seeders\ProductSeeder;
@@ -60,6 +61,33 @@ class OrderTest extends TestCase
                    'address'        => $order->address,
                ]
            ]);
+    }
+
+    public function test_an_authenticated_and_authorized_user_can_create_an_order()
+    {
+        $user = User::factory()->create(['type' => 'client']);
+        $user->assignRole('client');
+
+        $product = Product::first();
+
+        $data = [
+            'address'        => 'order address',
+            'products' =>   [
+                [
+                    'product_id' => $product->id,
+                    'quantity'   => 5
+                ]
+             ]
+        ];
+
+        $response = $this->actingAs($user)->post('/api/orders', $data);
+
+        $this->assertDatabaseCount('orders', 1);
+        $response->assertCreated();
+        $response->assertJson([
+            'data' => [
+            'address' => $data['address'],
+        ]]);
     }
 
 
