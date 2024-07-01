@@ -41,6 +41,27 @@ class OrderTest extends TestCase
         $this->assertDatabaseCount('orders', 2);
     }
 
+    public function test_an_authenticated_and_authorized_users_can_read_a_order()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('supervisor');
+        $this->actingAs($user);
+
+        $order = $this->createOrder();
+        $response = $this->get('/api/orders/'.$order->id);
+
+        $response->assertSuccessful();
+        $this->assertDatabaseCount('orders', 1);
+        $response->assertJson([
+               'data' => [
+                   'id'             => $order->id,                
+                   'client_id'      => $order->client_id,
+                   'products_price' => $order->products_price,
+                   'address'        => $order->address,
+               ]
+           ]);
+    }
+
 
     protected function createOrder()
     {
