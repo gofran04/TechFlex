@@ -111,6 +111,33 @@ class OrderTest extends TestCase
         ]]);
     }
 
+    public function test_unauthorized_users_can_not_create_or_update_an_order()
+    {
+        $driver = User::factory()->create(['type' => 'driver']);
+        $driver->assignRole('driver');
+
+        $order = $this->createOrder();
+
+        $product = Product::first();
+        $data1 = [
+            'address'        => 'order address',
+            'products' =>   [
+                [
+                    'product_id' => $product->id,
+                    'quantity'   => 5
+                ]
+             ]
+        ];
+
+        $data2 = [
+            'status'    => 'in process',
+            'driver_id' => $driver->id
+        ];
+
+        $this->actingAs($driver)->post('/api/orders',$data1)->assertForbidden();
+        $this->actingAs($driver)->patch('/api/orders/'.$order->id, $data2)->assertForbidden();
+    }
+
 
     protected function createOrder()
     {
