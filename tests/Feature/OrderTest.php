@@ -138,6 +138,22 @@ class OrderTest extends TestCase
         $this->actingAs($driver)->patch('/api/orders/'.$order->id, $data2)->assertForbidden();
     }
 
+    public function test_user_can_not_show_update_not_found_order()
+    {
+        $supervisor = User::factory()->create(['type' => 'supervisor']);
+        $supervisor->assignRole('supervisor');
+        $driver = User::factory()->create(['type' => 'driver']);
+        $driver->assignRole('driver');
+
+        $order = $this->createOrder();
+        $data = [
+            'status'    => 'in process',
+            'driver_id' => $driver->id
+        ];
+    
+        $this->actingAs($supervisor)->get('/api/orders/88')->assertNotFound();
+        $this->actingAs($supervisor)->patch('/api/orders/88', $data)->assertNotFound();
+    }
 
     protected function createOrder()
     {
