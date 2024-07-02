@@ -90,6 +90,27 @@ class OrderTest extends TestCase
         ]]);
     }
 
+    public function test_an_authenticated_and_authorized_user_can_update_an_order()
+    {
+        $supervisor = User::factory()->create(['type' => 'supervisor']);
+        $supervisor->assignRole('supervisor');
+
+        $driver = User::factory()->create(['type' => 'driver']);
+        $driver->assignRole('driver');
+
+        $order = $this->createOrder();
+        $data = [
+            'status'    => 'in process',
+            'driver_id' => $driver->id
+        ];
+
+        $response = $this->actingAs($supervisor)->patch('/api/orders/'.$order->id, $data);
+        $response->assertJson([
+            'data' => [
+            'status' => $data['status'],
+        ]]);
+    }
+
 
     protected function createOrder()
     {
