@@ -46,7 +46,9 @@ class PermissionsSeeder extends Seeder
             'view-all-orders',
             'view-order',
             'create-order',
-            'edit-order',        
+            'edit-order', 
+            
+            'edit-store',
         ];
 
         foreach ($permissions as $permission) 
