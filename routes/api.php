@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\OrderController;
 
@@ -25,6 +26,7 @@ Route::group(['middleware' => 'guest'], function (){
     Route::post('login',[AuthController::class, 'login'])->name('login');
     Route::apiResource('products',ProductController::class)->only(['index','show']);
     Route::apiResource('categories',CategoryController::class)->only(['index','show']);
+    Route::apiResource('stores',StoreController::class)->except(['store','destroy']);;
 
 });
 
