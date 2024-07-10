@@ -20,12 +20,6 @@ class Category extends Model implements HasMedia
 
     protected $appends = ['category_pic'];
 
-
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-
     public function products()
     {
         return $this->hasMany(Product::class);
