@@ -24,6 +24,14 @@ class StoreController extends Controller
     {
         $this->authorize('edit-store');
         $store->update($request->validated());
+        if ($request->has('logo')) 
+        {
+            if ($request->input('logo') !== $store->logo->file_name) 
+            {
+                $store->clearMediaCollection('logo');
+            }
+            $store->addMedia($request->file('logo'))->toMediaCollection('logo');
+        }
 
         return (new StoreResource($store->refresh()))
             ->response()
