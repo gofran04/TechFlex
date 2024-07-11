@@ -13,7 +13,7 @@ class StoreSeeder extends Seeder
      */
     public function run(): void
     {
-        Store::factory()->create([
+        Store::create([
             'name'              => "TechFlex",
             'email'             => 'Techflex@mail.com',
             'address'           => 'TechFlex Address- street 017',
