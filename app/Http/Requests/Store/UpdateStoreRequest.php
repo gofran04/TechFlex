@@ -26,6 +26,8 @@ class UpdateStoreRequest extends FormRequest
             'address'       => ['required'],
             'phone'         => 'required|starts_with:0|string|min:10|max:10|unique:stores,phone,'.$this->user->id,
             'email'         => 'required|email|unique:stores,email,'.$this->store->id,
+            'logo'          => ['file'],
+
         ];
     }
 }
