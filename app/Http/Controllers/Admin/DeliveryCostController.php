@@ -37,12 +37,12 @@ class DeliveryCostController extends Controller
         return new DeliveryCostResource($deliveyCost);
     }
 
-    public function update(UpdateDeliveryCostRequest $request, DeliveryCost $deliveyCost)
+    public function update(UpdateDeliveryCostRequest $request, DeliveryCost $deliveryCost)
     {
         $this->authorize('edit-delivery-cost');
-        $deliveyCost->update($request->validated());
+        $deliveryCost->update($request->validated());
 
-        return (new DeliveryCostResource($deliveyCost->refresh()))
+        return (new DeliveryCostResource($deliveryCost->refresh()))
                 ->response()
                 ->setStatusCode(Response::HTTP_ACCEPTED);
         
