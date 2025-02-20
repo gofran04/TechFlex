@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\DeliveyCost;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             GeneralManagerSeeder::class,
             PermissionsSeeder::class,
+            DeliveryCostSeeder::class,
             UserSeeder::class,
             ProductSeeder::class,
             CategorySeeder::class,
