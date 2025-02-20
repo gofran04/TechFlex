@@ -26,7 +26,7 @@ class UpdateOrderRequest extends FormRequest
             }
         }
         if ($order->status == 'out to delivery') {
-            if (!in_array($this->status, ['deliverd'])) {
+            if (!in_array($this->status, ['delivered'])) {
                 return false;
             }
         }
@@ -36,6 +36,7 @@ class UpdateOrderRequest extends FormRequest
             }
         }
         abort_if($order->status == 'delivered', '401', ('You Can Not Update This Order Status !'));
+       
         return true;   
     }
 
@@ -47,7 +48,7 @@ class UpdateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status'    => ['required', Rule::in(['initiated','in process','out to delivery','deliverd','canceled'])],
+            'status'    => ['required', Rule::in(['initiated','in process','out to delivery','delivered','canceled'])],
             'driver_id' => [Rule::requiredIf($this->status == 'initiated'),'exists:users,id'],
         ];
     }
