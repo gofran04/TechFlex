@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\StoreController;
+use App\Http\Controllers\Admin\DeliveryCostController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Api\OrderController;
 
@@ -36,4 +37,5 @@ Route::group(['middleware' => 'auth'],function(){
     Route::apiResource('orders',OrderController::class)->except(['destroy']);
     Route::apiResource('users',UserController::class);
     Route::apiResource('stores',StoreController::class)->only(['update']);
+    Route::apiResource('delivery-costs',DeliveryCostController::class);
 });

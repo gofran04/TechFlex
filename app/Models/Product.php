@@ -19,6 +19,7 @@ class Product extends Model implements HasMedia
         'category_id',
         'price',
         'description',
+        'status',
     ];
 
     protected $appends = ['product_pic'];

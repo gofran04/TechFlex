@@ -1,39 +1,19 @@
 # TechFlex 
 
-###  TechFlex is a Simple E-Commerce System sells devices (mobiles,computers,printers,accessories,..)
+The TechFlex application designed to streamline the process of online shopping store specified for Tech devices and accessories. And it has two sections:
 
-###### There are 3 main users in the system:
+One: web-based platform (dashboard). It allows admin to add,edit,view and delete categories and products to the system, register accounts for delivery boys,assign order to specific delivery boy
 
-1- Admin: Admins could:
-- Login.
+Two: mobile-based platform . It allows clients to view categories and products , make orders, track their orders and view their history. And allows delivery boys to view their assigned orders.
 
-- CRUD categories: Create,view,update and delete categories to the system.
+The application will be built using a combination of HTML, CSS, and Javascript for the frontend and php (Laravel)  for the backend.
 
-- CRUD products: Create,view,update and delete product to the system.
+Admin will use the dashboard. Client and delivery workers will use mobile app.
 
-- CRUD users: Create,view,update and delete users(admins or deliver workers) to the system.
-
-2- Client: clients could:
-- Register and login.
-
-- View categories and products.
-
-- Order products.
-
-- View and update profile.
-
-- Change/reset password.
-
-- View oders and orders'status.
-
-3- Delivery workers: workers could:
-- Login.
-
-- View and update profile.
-
-- View orders assigned to them.
-
-- Change order's status after deliver the products.
+This Repo is an API for the mobile-based platform.
 
 
-Admin will use the dashboard. Client and delivery workers will use mobile app. And here in this Repo is an API of the system.
+##### Project's Documentations links: 
+- Process Documentation: https://gofran.bitdocs.ai/share/d/9KdyoRb0Ktc8cHHR
+- Software Design Documentation: https://gofran.bitdocs.ai/share/d/G2rBEHrucpxRBYeN
+- Software Requirements Documentation : https://gofran.bitdocs.ai/share/d/1ZfGsh693do7mjch

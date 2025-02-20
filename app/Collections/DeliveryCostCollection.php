@@ -4,13 +4,13 @@
 namespace App\Collections;
 
 
-use App\Models\Product;
+use App\Models\DeliveryCost;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 
 
-class ProductsCollection
+class DeliveryCostCollection
 {
     public static function collection(Request $request)
     {
@@ -18,40 +18,25 @@ class ProductsCollection
 
         $defaultSelect = [
             'id',
-            'name',
-            'category_id',
-            'price',
-            'description',
-            'status',
-            'amount',
+            'area',
+            'delivery_cost',
             'created_at',
             'updated_at',
         ];
 
         $allowedFilters = [
             AllowedFilter::exact('id'),
-            AllowedFilter::exact('category_id'),
-            'name',
-            'price',
-            'description',
-            'status',
-            'amount',
+            'area',
+            'delivery_cost',
             'created_at',
             'updated_at',
-        ];
-
-        $allowedSorts = [
-            'price',
-            'updated_at',
-            'created_at',
         ];
 
         $perPage = $request->limit  ? $request->limit : 50;
 
-        return QueryBuilder::for(Product::class)
+        return QueryBuilder::for(DeliveryCost::class)
             ->select($defaultSelect)
             ->allowedFilters($allowedFilters)
-            ->allowedSorts($allowedSorts)
             ->defaultSort($defaultSort)
             ->paginate($perPage);
     }
