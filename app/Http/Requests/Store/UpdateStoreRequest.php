@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Requests\Store;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateStoreRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'name'          => ['required', 'string'],
+            'address'       => ['required'],
+            'phone'         => 'required|starts_with:0|string|min:10|max:10|unique:stores,phone,'.$this->user->id,
+            'email'         => 'required|email|unique:stores,email,'.$this->store->id,
+            'logo'          => ['file'],
+
+        ];
+    }
+}
