@@ -22,6 +22,9 @@ class ProductFactory extends Factory
             'description'   => fake()->text(),
             'price'         => '20.00',
             'category_id'   => Category::factory(),
+            'status'        => 'in stock',
+            'amount'        => '100',
+
                       
         ];
     }
