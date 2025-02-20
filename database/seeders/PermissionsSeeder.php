@@ -43,6 +43,12 @@ class PermissionsSeeder extends Seeder
             'edit-category',
             'delete-category',
 
+            'view-all-delivery-costs',
+            'view-delivery-cost',
+            'creat-delivery-cost',
+            'edit-delivery-cost',
+            'delete-delivery-cost',
+
             'view-all-orders',
             'view-order',
             'create-order',
@@ -83,9 +89,24 @@ class PermissionsSeeder extends Seeder
             'view-order',
             'edit-order',
 
+            'view-all-delivery-costs',
+            'view-delivery-cost',
+            'creat-delivery-cost',
+            'edit-delivery-cost',
+            'delete-delivery-cost',
+
+
          ]);
          
        $driver =  Role::create(['guard_name' => 'api','name' => 'driver']);
+       $driver->syncPermissions([
+        'edit-profile',
+        'view-profile',
+
+        'edit-order',
+        'view-all-orders',
+        'view-order',
+   ]);
 
 
     }
