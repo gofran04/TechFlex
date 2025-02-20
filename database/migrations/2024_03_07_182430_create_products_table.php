@@ -17,6 +17,8 @@ return new class extends Migration
             $table->text('description');
             $table->foreignId('category_id')->references('id')->on('categories');
             $table->decimal('price', 8, 2);
+            $table->set('status', ['in stock', 'out stock'])->default('out stock');
+            $table->integer('amount')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

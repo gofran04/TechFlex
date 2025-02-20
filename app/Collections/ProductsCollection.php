@@ -22,6 +22,8 @@ class ProductsCollection
             'category_id',
             'price',
             'description',
+            'status',
+            'amount',
             'created_at',
             'updated_at',
         ];
@@ -32,6 +34,8 @@ class ProductsCollection
             'name',
             'price',
             'description',
+            'status',
+            'amount',
             'created_at',
             'updated_at',
         ];
