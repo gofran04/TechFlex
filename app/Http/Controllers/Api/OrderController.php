@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use App\Collections\OrdersCollection;
 use Carbon\Carbon;
+use App\Http\Services\PaymentService;
 
 
 class OrderController extends Controller
@@ -40,6 +41,7 @@ class OrderController extends Controller
             $delivery_cost = DeliveryCost::where('id',$request->area_id)->first()->delivery_cost;
 
             $all_products = $request->products;
+            $lineItems = [];
             foreach ($all_products as $product)
             {
                 $product_model = Product::find($product['product_id']);
@@ -53,14 +55,34 @@ class OrderController extends Controller
                 ]; 
 
                 OrderProduct::create($data);
-            }
+                $lineItems[] = [
+                    'price_data' => [
+                        'currency' => 'usd',
+                        'product_data' => [
+                            'name' => $product_model->name,
+                        ],
+                        'unit_amount' => $product_model->price * 100, // Convert dollars to cents. Stripe needs cents
+                    ],
+                    'quantity' => $product['quantity'],
+                ];
+            }// end of foreach loop
+            $lineItems = array_filter($lineItems); // filter array to remove if there is any empty index that may cause a prolem.
+            $lineItems = array_values($lineItems); //reindex array to avoid misindexing
+
+
             $products_price = OrderProduct::Where('order_id',$order->id)->sum('total_price');
             $order->update([
                 'products_price' => $products_price,
                 'total_cost'     => $products_price + $delivery_cost,
                 ]);
+
+            // ----- payment servive
+            $checkout_url =  PaymentService::checkout($lineItems,$order->id);
             
             return (new OrderResource($order))
+            ->additional([
+                'checkout_url' => $checkout_url,
+            ])
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
         });
