@@ -18,7 +18,7 @@ return new class extends Migration
             $table->float('products_price')->default(0);
             $table->float('total_cost')->nullable();
             $table->string('address');
-            $table->foreignId('area_id')->references('id')->on('delivery_cost');
+            $table->foreignId('area_id')->references('id')->on('delivery_costs');
             $table->double('delivery_latitude')->nullable();
             $table->double('delivery_longitude')->nullable();
             $table->set('status', ['initiated','in process', 'out to delivery', 'delivered', 'canceled'])->default('initiated');
