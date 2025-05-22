@@ -1,9 +1,19 @@
+echo "=== ENV ==="
+printenv | grep OCTANE
+
+echo "=== Memory Info ==="
+free -m
+
 # Clear Laravel caches
 php artisan config:clear
 php artisan route:clear
 php artisan cache:clear
 
+# Rebuild config cache to load Railway ENV properly
+php artisan config:cache
 
-echo "Starting Laravel Octane with RoadRunner on port ${PORT}..."
+# Log what port is being used
+echo "Starting Octane on port ${PORT}"
 
-php artisan octane:start --server=roadrunner --host=0.0.0.0 --port=${PORT} --max-requests=80
+# Start Octane with low memory settings
+php artisan octane:start --server=roadrunner --host=0.0.0.0 --port=${PORT} --workers=2 --max-requests=80
