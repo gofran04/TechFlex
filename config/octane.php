@@ -39,6 +39,8 @@ return [
     */
 
     'server' => env('OCTANE_SERVER', 'roadrunner'),
+    'workers' => env('OCTANE_WORKERS', 2),
+    'max_requests' => env('OCTANE_MAX_REQUESTS', 80),
 
     /*
     |--------------------------------------------------------------------------
