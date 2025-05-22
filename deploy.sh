@@ -17,3 +17,6 @@ echo "Starting Octane on port ${PORT}"
 
 # Start Octane with low memory settings
 php artisan octane:start --server=roadrunner --host=0.0.0.0 --port=${PORT} --workers=2 --max-requests=80
+
+# Add a curl in the script to ping your server after starting (to simulate traffic):
+curl http://localhost:${PORT} &
