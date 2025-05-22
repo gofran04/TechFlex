@@ -1,22 +1,20 @@
-echo "=== ENV ==="
-printenv | grep OCTANE
+#!/bin/bash
 
-echo "=== Memory Info ==="
-free -m
+# Make sure any failure causes exit
+set -e
 
-# Clear Laravel caches
+# Clear and rebuild Laravel caches
 php artisan config:clear
 php artisan route:clear
 php artisan cache:clear
-
-# Rebuild config cache to load Railway ENV properly
 php artisan config:cache
 
-# Log what port is being used
+# Log port
 echo "Starting Octane on port ${PORT}"
 
-# Start Octane with low memory settings
-php artisan octane:start --server=roadrunner --host=0.0.0.0 --port=${PORT} --workers=2 --max-requests=80
+# Install RoadRunner manually (optional if not present)
+# curl -Ls https://github.com/roadrunner-server/roadrunner/releases/latest/download/roadrunner-linux-amd64 -o rr
+# chmod +x rr
 
-# Add a curl in the script to ping your server after starting (to simulate traffic):
-curl http://localhost:${PORT} &
+# Block and keep server alive
+exec php artisan octane:start --server=roadrunner --host=0.0.0.0 --port=${PORT} --workers=2 --max-requests=80
